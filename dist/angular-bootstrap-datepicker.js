@@ -3295,47 +3295,50 @@ var dp;
 
 dp = angular.module('ng-bootstrap-datepicker', []);
 
-dp.directive('ngDatepicker', function() {
-  return {
-    restrict: 'A',
-    require: '?ngModel',
-    scope: {
-      ngDatepicker: '='
-    },
-    link: function($scope, element, attrs, controller) {
-      var onblur, updateModel;
-      updateModel = void 0;
-      onblur = void 0;
-      if (controller !== null) {
-        updateModel = function(event) {
-          element.datepicker('hide');
-          element.blur();
-        };
-        onblur = function() {
-          var date;
-          date = element.val();
-          return $scope.$apply(function() {
-            return controller.$setViewValue(date);
-          });
-        };
-        controller.$render = function() {
-          var date;
-          date = controller.$viewValue;
-          if (angular.isDefined(date) && date !== null && angular.isDate(date)) {
-            element.datepicker().data().datepicker.date = date;
-            element.datepicker('setValue');
-            element.datepicker('update');
-          } else if (angular.isDefined(date)) {
-            throw new Error('ng-Model value must be a Date object - currently it is a ' + typeof date + ' - use ui-date-format to convert it from a string');
-          }
-          return controller.$viewValue;
-        };
-      }
-      return attrs.$observe('ngDatepicker', function() {
-        var options;
-        options = $scope.ngDatepicker || {};
-        return element.datepicker(options).on('changeDate', updateModel).on('blur', onblur);
+({
+  restrict: 'A',
+  require: '?ngModel',
+  scope: {
+    ngDatepicker: '=',
+    ngModel: '='
+  },
+  link: function($scope, element, attrs, controller) {
+    var onblur, updateModel;
+    updateModel = function($event) {
+      element.datepicker('hide');
+      element.blur();
+    };
+    onblur = function() {
+      var date;
+      date = void 0;
+      date = element.val();
+      return $scope.$apply(function() {
+        return controller.$setViewValue(date);
       });
+    };
+    if (controller !== null) {
+      controller.$render = function() {
+        var date;
+        date = void 0;
+        date = controller.$viewValue;
+        if (angular.isDefined(date) && date !== null && angular.isDate(date)) {
+          element.datepicker().data().datepicker.date = date;
+          element.datepicker('setValue');
+          element.datepicker('update');
+        } else if (angular.isDefined(date)) {
+          throw new Error('ng-Model value must be a Date object - currently it is a ' + typeof date + ' - use ui-date-format to convert it from a string');
+        }
+        return controller.$viewValue;
+      };
     }
-  };
+    if ($scope.ngModel) {
+      element.datepicker('setDate', $scope.ngModel);
+    }
+    return attrs.$observe('ngDatepicker', function() {
+      var options;
+      options = void 0;
+      options = $scope.ngDatepicker || {};
+      return element.datepicker(options).on('changeDate', updateModel).on('blur', onblur);
+    });
+  }
 });
