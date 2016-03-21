@@ -3303,7 +3303,7 @@ dp.directive('ngDatepicker', function() {
       ngDatepicker: '=',
       ngModel: '='
     },
-    link: function($scope, element, controller) {
+    link: function($scope, element, attrs, controller) {
       var options;
       options = $scope.ngDatepicker || {};
       $scope.inputHasFocus = false;

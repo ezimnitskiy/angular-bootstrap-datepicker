@@ -6,7 +6,7 @@ dp.directive 'ngDatepicker', ->
   scope:
     ngDatepicker: '='
     ngModel: '='
-  link: ($scope, element, controller) ->
+  link: ($scope, element, attrs, controller) ->
     options = $scope.ngDatepicker or {}
     $scope.inputHasFocus = false
     element.datepicker(options).on 'changeDate', ($event) ->
