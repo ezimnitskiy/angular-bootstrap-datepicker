@@ -2,34 +2,33 @@ dp = angular.module('ng-bootstrap-datepicker', [])
 
 dp.directive 'ngDatepicker', ->
   restrict: 'A'
-  replace: true
-  scope:
-    ngOptions: '='
-    ngModel: '='
-  template: """
-            <div class="input-append date">
-              <input type="text"><span class="add-on"><i class="icon-th"></i></span>
-            </div>
-            """
-  link: (scope, element)->
-    scope.inputHasFocus = false
+  require: '?ngModel'
+  scope: ngDatepicker: '='
+  link: ($scope, element, attrs, controller) ->
+    updateModel = undefined
+    onblur = undefined
+    if controller != null
 
-    element.datepicker(scope.ngOptions).on('changeDate', (e)->
+      updateModel = (event) ->
+        element.datepicker 'hide'
+        element.blur()
+        return
 
-      defaultFormat = $.fn.datepicker.defaults.format
-      format = scope.ngOptions.format || defaultFormat
-      defaultLanguage = $.fn.datepicker.defaults.language
-      language = scope.ngOptions.language || defaultLanguage
+      onblur = ->
+        date = element.val()
+        $scope.$apply ->
+          controller.$setViewValue date
 
-      scope.$apply -> scope.ngModel = $.fn.datepicker.DPGlobal.formatDate(e.date, format, language)
-    )
+      controller.$render = ->
+        date = controller.$viewValue
+        if angular.isDefined(date) and date != null and angular.isDate(date)
+          element.datepicker().data().datepicker.date = date
+          element.datepicker 'setValue'
+          element.datepicker 'update'
+        else if angular.isDefined(date)
+          throw new Error('ng-Model value must be a Date object - currently it is a ' + typeof date + ' - use ui-date-format to convert it from a string')
+        controller.$viewValue
 
-    element.find('input').on('focus', ->
-      scope.inputHasFocus = true
-    ).on('blur', ->
-      scope.inputHasFocus = false
-    )
-
-    scope.$watch 'ngModel', (newValue)->
-      if not scope.inputHasFocus
-        element.datepicker('update', newValue)
+    attrs.$observe 'ngDatepicker', ->
+      options = $scope.ngDatepicker or {}
+      element.datepicker(options).on('changeDate', updateModel).on 'blur', onblur
