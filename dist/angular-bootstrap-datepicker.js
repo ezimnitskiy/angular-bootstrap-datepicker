@@ -3291,42 +3291,44 @@
 	};
 }(jQuery));
 
-var dp;
-
-dp = angular.module('ng-bootstrap-datepicker', []);
-
-dp.directive('ngDatepicker', function() {
-  return {
-    restrict: 'A',
-    require: '?ngModel',
-    scope: {
-      ngDatepicker: '=',
-      ngModel: '='
-    },
-    link: function($scope, element, attrs, controller) {
-      var options;
-      options = $scope.ngDatepicker || {};
-      $scope.inputHasFocus = false;
-      element.datepicker(options).on('changeDate', function($event) {
-        if (!$scope.$$phase && !$scope.$root.$$phase) {
-          return $scope.$apply(function() {
-            return controller.$setViewValue($event.date);
+angular.module('ui-bootstrap-datepicker', []).directive('uiDatepicker', [
+  '$timeout', function($timeout) {
+    return {
+      restrict: 'A',
+      require: '?ngModel',
+      scope: {
+        uiDatepickerOptions: '=',
+        ngModel: '='
+      },
+      link: function($scope, element, attrs, controller) {
+        var handler;
+        handler = function() {
+          var options;
+          options = $scope.uiDatepickerOptions || {};
+          $scope.inputHasFocus = false;
+          element.datepicker(options).on('changeDate', function($event) {
+            if (!$scope.$$phase && !$scope.$root.$$phase) {
+              return $scope.$apply(function() {
+                return controller.$setViewValue($event.date);
+              });
+            }
           });
-        }
-      });
-      element.on('focus', function() {
-        return $scope.inputHasFocus = true;
-      }).on('blur', function() {
-        return $scope.inputHasFocus = false;
-      });
-      if ($scope.ngModel) {
-        element.datepicker('setDate', $scope.ngModel);
+          element.on('focus', function() {
+            return $scope.inputHasFocus = true;
+          }).on('blur', function() {
+            return $scope.inputHasFocus = false;
+          });
+          if ($scope.ngModel) {
+            element.datepicker('setDate', $scope.ngModel);
+          }
+          $scope.$watch('ngModel', function(value) {
+            if (!$scope.inputHasFocus) {
+              return element.datepicker('update', value);
+            }
+          });
+        };
+        $timeout(handler, 0);
       }
-      return $scope.$watch('ngModel', function(value) {
-        if (!$scope.inputHasFocus) {
-          return element.datepicker('update', value);
-        }
-      });
-    }
-  };
-});
+    };
+  }
+]);
