@@ -13,7 +13,7 @@ You can download angular-bootstrap-datepicker via bower:
 When you are done downloading all the dependencies and project files the only remaining part is to add dependencies as an AngularJS module:
 
 ```javascript
-angular.module('myModule', ['ng-bootstrap-datepicker']);
+angular.module('myModule', ['ui-bootstrap-datepicker']);
 ```
 
 You also need to include these files:
