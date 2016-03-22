@@ -34,9 +34,9 @@ Make sure you use `charset="utf-8"` in your script tag if your browser (or those
 To use the directive, use the following code :
 
 ```html
-<input type="text" ng-datepicker="datepickerOptions" />
+<input type="text" ui-datepicker ui-datepicker-options="datepickerOptions" />
 ```
 
-`ng-datepicker` : Indicates you want your input as a date picker.
+`ui-datepicker` : Indicates you want your input as a date picker.
 
-`datepickerOptions` : Object of the controller scope containing the [options](http://bootstrap-datepicker.readthedocs.org/en/latest/options.html) for your date picker.
+`ui-datepicker-options` : Object of the controller scope containing the [options](http://bootstrap-datepicker.readthedocs.org/en/latest/options.html) for your date picker.
